@@ -1,0 +1,170 @@
+ body {
+   margin: 0;
+   padding: 0;
+   overflow: hidden;
+   background-color: #050505;
+   font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+   color: white;
+ }
+
+ /* UI Overlays */
+ #ui-overlay {
+   position: absolute;
+   top: 20px;
+   left: 20px;
+   pointer-events: none;
+   z-index: 10;
+ }
+
+ .label {
+   background: rgba(0, 0, 0, 0.7);
+   padding: 12px 18px;
+   border-radius: 8px;
+   border-left: 4px solid #00ffff;
+   backdrop-filter: blur(5px);
+ }
+
+ h1 {
+   margin: 0 0 5px 0;
+   font-size: 1.4rem;
+   color: #00ffff;
+   letter-spacing: 1px;
+ }
+
+ p {
+   margin: 0;
+   font-size: 0.85rem;
+   opacity: 0.8;
+ }
+
+ /* Interaction Prompt */
+ #interaction-prompt {
+   position: absolute;
+   bottom: 30px;
+   width: 100%;
+   text-align: center;
+   color: #00ffff;
+   font-weight: bold;
+   pointer-events: none;
+   text-transform: uppercase;
+   letter-spacing: 2px;
+   z-index: 5;
+   animation: pulse 2s infinite;
+ }
+
+ @keyframes pulse {
+
+   0%,
+   100% {
+     opacity: 0.4;
+   }
+
+   50% {
+     opacity: 1;
+   }
+ }
+
+ /* Sidebar Toggle Button */
+ #info-btn {
+   position: absolute;
+   top: 20px;
+   right: 20px;
+   width: 45px;
+   height: 45px;
+   background: rgba(0, 255, 255, 0.2);
+   border: 1px solid rgba(0, 255, 255, 0.5);
+   border-radius: 50%;
+   color: #00ffff;
+   cursor: pointer;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   transition: all 0.3s ease;
+   z-index: 100;
+   backdrop-filter: blur(5px);
+ }
+
+ #info-btn:hover {
+   background: rgba(0, 255, 255, 0.4);
+   transform: scale(1.1);
+ }
+
+ /* Sidebar Styles */
+ #sidebar {
+   position: fixed;
+   top: 0;
+   right: -350px;
+   width: 320px;
+   height: 100%;
+   background: rgba(10, 10, 10, 0.95);
+   border-left: 1px solid rgba(0, 255, 255, 0.3);
+   box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+   z-index: 1000;
+   transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+   overflow-y: auto;
+   padding: 30px 20px;
+   backdrop-filter: blur(10px);
+ }
+
+ #sidebar.open {
+   right: 0;
+ }
+
+ #sidebar h2 {
+   color: #00ffff;
+   border-bottom: 1px solid #333;
+   padding-bottom: 10px;
+   font-size: 1.2rem;
+ }
+
+ /* Accordion Styles */
+ .accordion-item {
+   margin-bottom: 10px;
+   border-bottom: 1px solid #222;
+ }
+
+ .accordion-header {
+   padding: 15px 0;
+   cursor: pointer;
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   font-weight: 600;
+   color: #ccc;
+   transition: color 0.3s;
+ }
+
+ .accordion-header:hover {
+   color: #00ffff;
+ }
+
+ .accordion-content {
+   max-height: 0;
+   overflow: hidden;
+   transition: max-height 0.3s ease-out;
+   font-size: 0.9rem;
+   line-height: 1.5;
+   color: #aaa;
+ }
+
+ .accordion-item.active .accordion-content {
+   max-height: 200px;
+   padding-bottom: 15px;
+ }
+
+ .accordion-item.active .accordion-header {
+   color: #00ffff;
+ }
+
+ .close-btn {
+   position: absolute;
+   top: 15px;
+   left: 15px;
+   cursor: pointer;
+   font-size: 1.5rem;
+   color: #555;
+ }
+
+ .close-btn:hover {
+   color: white;
+ }
