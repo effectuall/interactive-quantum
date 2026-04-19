@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carbon Hybridization & Allotropes 3D</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #0a0a0a;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: white;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        #header {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            pointer-events: auto;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 24px;
+            color: #00d4ff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        p {
+            margin: 5px 0;
+            font-size: 14px;
+            color: #ccc;
+        }
+
+        .control-panel {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            pointer-events: auto;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 15px;
+            border-radius: 50px;
+            border: 1px solid #444;
+            backdrop-filter: blur(5px);
+        }
+
+        button {
+            background: #222;
+            color: #fff;
+            border: 1px solid #555;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        button:hover {
+            background: #00d4ff;
+            color: #000;
+            border-color: #fff;
+        }
+
+        button.active {
+            background: #00d4ff;
+            color: #000;
+            box-shadow: 0 0 15px #00d4ff;
+        }
+
+        .info-sidebar {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            pointer-events: auto;
+        }
+
+        .icon-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #111;
+            border: 2px solid #00d4ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            color: #00d4ff;
+            transition: 0.3s;
+        }
+
+        .icon-btn:hover {
+            background: #00d4ff;
+            color: #111;
+            transform: scale(1.1);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 500px;
+            background: rgba(15, 15, 15, 0.95);
+            border: 1px solid #00d4ff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 1);
+            pointer-events: auto;
+        }
+
+        .modal h2 {
+            color: #00d4ff;
+            margin-top: 0;
+        }
+
+        .modal p {
+            line-height: 1.6;
+            font-size: 15px;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            cursor: pointer;
+            font-size: 24px;
+            color: #666;
+        }
+
+        .close-btn:hover {
+            color: #fff;
+        }
+
+        #legend {
+            position: absolute;
+            bottom: 30px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+        }
+
+        .dot {
+            height: 10px;
+            width: 10px;
+            display: inline-block;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .carbon-dot {
+            background-color: #444;
+            border: 1px solid #888;
+        }
+
+        .bond-dot {
+            background-color: #00d4ff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="ui-layer">
+        <div id="header">
+            <h1>Carbon Explorer</h1>
+            <p>Interactive STEM Simulation: Dimensionality of Carbon</p>
+        </div>
+
+        <div class="control-panel">
+            <button onclick="switchView('hybrid')" class="active" id="btn-hybrid">Atomic Hybridization</button>
+            <button onclick="switchView('diamond')" id="btn-diamond">3D: Diamond (sp³)</button>
+            <button onclick="switchView('graphite')" id="btn-graphite">2D Stack: Graphite (sp²)</button>
+            <button onclick="switchView('graphene')" id="btn-graphene">2D: Graphene</button>
+            <button onclick="switchView('nanotube')" id="btn-nanotube">1D: Nanotube</button>
+        </div>
+
+        <div class="info-sidebar">
+            <div class="icon-btn" onclick="openModal('m-hybrid')">⚛️</div>
+            <div class="icon-btn" onclick="openModal('m-allotropes')">💎</div>
+            <div class="icon-btn" onclick="openModal('m-future')">🚀</div>
+        </div>
+
+        <div id="legend">
+            <div><span class="dot carbon-dot"></span> Carbon Atom</div>
+            <div><span class="dot bond-dot"></span> Covalent Bond</div>
+        </div>
+    </div>
+
+    <div id="m-hybrid" class="modal">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2>Carbon Hybridization</h2>
+        <p>Carbon has 4 valence electrons. By mixing its 2s and 2p orbitals, it can form different structures:</p>
+        <ul>
+            <li><strong>sp³:</strong> 4 single bonds, tetrahedral (109.5°). Forms Diamond.</li>
+            <li><strong>sp²:</strong> 3 sigma bonds + 1 delocalized pi bond, planar (120°). Forms Graphene/Graphite.
+            </li>
+            <li><strong>sp:</strong> 2 sigma bonds + 2 pi bonds, linear (180°). Forms Carbyne.</li>
+        </ul>
+    </div>
+
+    <div id="m-allotropes" class="modal">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2>Allotropes of Carbon</h2>
+        <p>Allotropes are different physical forms of the same element. Carbon is the king of allotropes:</p>
+        <ul>
+            <li><strong>Diamond:</strong> 3D lattice, hardest natural material.</li>
+            <li><strong>Graphite:</strong> Stacked layers of graphene. Soft and conductive.</li>
+            <li><strong>Graphene:</strong> One-atom thick sheet with immense strength and conductivity.</li>
+            <li><strong>Nanotubes:</strong> 1D rolled graphene cylinders.</li>
+        </ul>
+    </div>
+
+    <div id="m-future" class="modal">
+        <span class="close-btn" onclick="closeModal()">&times;</span>
+        <h2>Future in Electronics</h2>
+        <p>Silicon is reaching its physical limits. Carbon-based electronics offer:</p>
+        <ul>
+            <li><strong>Speed:</strong> High electron mobility for THz processing.</li>
+            <li><strong>Flexibility:</strong> Carbon nanotubes can be used in wearable screens and sensors.</li>
+            <li><strong>Efficiency:</strong> Lower heat generation than silicon transistors.</li>
+        </ul>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        let scene, camera, renderer, controls, group;
+        const atomMaterial = new THREE.MeshPhongMaterial({ color: 0x333333, specular: 0x666666, shininess: 100 });
+        const bondMaterial = new THREE.MeshPhongMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.8 });
+
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.z = 15;
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            document.body.appendChild(renderer.domElement);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+            scene.add(ambientLight);
+
+            const pointLight = new THREE.PointLight(0xffffff, 1);
+            pointLight.position.set(10, 10, 10);
+            scene.add(pointLight);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+
+            group = new THREE.Group();
+            scene.add(group);
+
+            switchView('hybrid');
+            animate();
+        }
+
+        function createAtom(x, y, z) {
+            const geo = new THREE.SphereGeometry(0.3, 32, 32);
+            const mesh = new THREE.Mesh(geo, atomMaterial);
+            mesh.position.set(x, y, z);
+            group.add(mesh);
+            return mesh;
+        }
+
+        function createBond(p1, p2) {
+            const direction = new THREE.Vector3().subVectors(p2, p1);
+            const length = direction.length();
+            const geo = new THREE.CylinderGeometry(0.06, 0.06, length, 8);
+            const mesh = new THREE.Mesh(geo, bondMaterial);
+
+            mesh.position.copy(p1);
+            mesh.position.lerp(p2, 0.5);
+            mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.clone().normalize());
+            group.add(mesh);
+        }
+
+        function clearGroup() {
+            while (group.children.length > 0) {
+                group.remove(group.children[0]);
+            }
+        }
+
+        function drawHexagon(centerX, centerY, centerZ, scale = 1.5) {
+            const points = [];
+            for (let i = 0; i < 6; i++) {
+                const angle = (i * Math.PI) / 3;
+                points.push(new THREE.Vector3(
+                    centerX + Math.cos(angle) * scale,
+                    centerY,
+                    centerZ + Math.sin(angle) * scale
+                ));
+            }
+            points.forEach(p => createAtom(p.x, p.y, p.z));
+            for (let i = 0; i < 6; i++) {
+                createBond(points[i], points[(i + 1) % 6]);
+            }
+            return points;
+        }
+
+        function switchView(type) {
+            clearGroup();
+            document.querySelectorAll('.control-panel button').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-' + type).classList.add('active');
+
+            if (type === 'hybrid') {
+                // Visualize SP3 Hybridization (Tetrahedron)
+                const center = new THREE.Vector3(0, 0, 0);
+                createAtom(0, 0, 0);
+                const vertices = [
+                    new THREE.Vector3(1, 1, 1),
+                    new THREE.Vector3(-1, -1, 1),
+                    new THREE.Vector3(-1, 1, -1),
+                    new THREE.Vector3(1, -1, -1)
+                ];
+                vertices.forEach(v => {
+                    createAtom(v.x, v.y, v.z);
+                    createBond(center, v);
+                });
+            }
+            else if (type === 'diamond') {
+                const step = 2.5;
+                for (let x = -1; x <= 1; x++) {
+                    for (let y = -1; y <= 1; y++) {
+                        for (let z = -1; z <= 1; z++) {
+                            const base = new THREE.Vector3(x * step, y * step, z * step);
+                            createAtom(base.x, base.y, base.z);
+                            // Simplified lattice bonds
+                            const offset = new THREE.Vector3(step / 2, step / 2, step / 2);
+                            if (x < 1 && y < 1 && z < 1) {
+                                const neighbor = base.clone().add(offset);
+                                createAtom(neighbor.x, neighbor.y, neighbor.z);
+                                createBond(base, neighbor);
+                            }
+                        }
+                    }
+                }
+            }
+            else if (type === 'graphene' || type === 'graphite') {
+                const layers = type === 'graphite' ? 3 : 1;
+                const spacing = 3;
+                for (let l = 0; l < layers; l++) {
+                    for (let row = -2; row <= 2; row++) {
+                        for (let col = -2; col <= 2; col++) {
+                            const ox = col * 2.6;
+                            const oz = row * 4.5 + (col % 2 === 0 ? 0 : 2.25);
+                            drawHexagon(ox, l * -2.5, oz, 1.5);
+                        }
+                    }
+                }
+            }
+            else if (type === 'nanotube') {
+                const radius = 3;
+                const segments = 12;
+                const rings = 8;
+                for (let j = 0; j < rings; j++) {
+                    const z = (j - rings / 2) * 2;
+                    for (let i = 0; i < segments; i++) {
+                        const angle = (i / segments) * Math.PI * 2;
+                        const nextAngle = ((i + 1) / segments) * Math.PI * 2;
+
+                        const x1 = Math.cos(angle) * radius;
+                        const y1 = Math.sin(angle) * radius;
+                        const x2 = Math.cos(nextAngle) * radius;
+                        const y2 = Math.sin(nextAngle) * radius;
+
+                        createAtom(x1, y1, z);
+                        createBond(new THREE.Vector3(x1, y1, z), new THREE.Vector3(x2, y2, z));
+
+                        if (j < rings - 1) {
+                            const shift = (j % 2 === 0) ? 0.2 : -0.2;
+                            createBond(new THREE.Vector3(x1, y1, z), new THREE.Vector3(x1, y1, z + 2));
+                        }
+                    }
+                }
+            }
+        }
+
+        function openModal(id) {
+            document.getElementById(id).style.display = 'block';
+        }
+
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        }
+
+        function animate() {
+            requestAnimationFrame(animate);
+            group.rotation.y += 0.003;
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        init();
+    </script>
+</body>
+
+</html>
